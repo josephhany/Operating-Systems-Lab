@@ -23,3 +23,16 @@ This command will run the file restore.sh and pass to it three parameters :
 
 
 Note: Do not provide a non empty directory to the program to restore the files in because it will not allow so.
+
+In order to run the backup each hour, you need to do the following:
+
+1- crontab -e
+2- modify the crontab by adding this line at the end:
+
+0 * * * * /root/csce_3402/lab_1/backup.sh /root/csce_3402/lab_1/dir_to_backup /root/csce_3402/lab_1/dir_to_backup_into 123 
+
+3- if you need to view the log file for this cron job put this line:
+
+>> /tmp/foo.log 2>&1
+
+and run vi /tmp/foo.log
