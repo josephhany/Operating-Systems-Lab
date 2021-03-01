@@ -1,0 +1,26 @@
+#!/bin/sh
+exec tail -n +3 $0
+# This file provides an easy way to add custom menu entries.  Simply type the
+# menu entries you want to add after this comment.  Be careful not to change
+# the 'exec tail' line above.
+
+
+menuentry 'Debain GNU/Linux no kaslr' --class debian --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-simple-3a0e55fb-5669-42f3-bdd7-8700588cb14b' {
+	load_video
+	insmod gzio
+	if [ x$grub_platform =xxen ]; then insmod xzio; insmod lzopio; fi
+	insmod part_msdos
+	insmod ext2
+	set root='hd0,msdos1'
+	if [ x$feature_platform_search_hint = xy ]; then
+		search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1 3a0e55fb-5669-42f3-bdd7-8700588cb14b
+	else
+		search --no-floppy --fs-uuid --set=root 3a0e55fb-5669-42f3-bdd7-8700588cb14b
+	fi
+	echo	'Loading Linux 4.19.0-13-amd64 ...'
+	linux /boot/vmlinuz-4.19.0-13-amd64 root=UUID=3a0e55fb-5669-42f3-bdd7-8700588cb14b ro quiet
+	echo	'Loading initial ramdisk ...'
+	initrd /boot/initrd.img-4.19.0-13-amd64
+	echo	'Passing nokaslr kernel command line parameter as a kernel boot option'
+	set GRUB_CMDLINE_LINUX_DEFAULT='quiet nokaslr'
+}
