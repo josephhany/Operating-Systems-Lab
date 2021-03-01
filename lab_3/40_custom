@@ -17,10 +17,12 @@ menuentry 'Debain GNU/Linux no kaslr' --class debian --class gnu-linux --class g
 	else
 		search --no-floppy --fs-uuid --set=root 3a0e55fb-5669-42f3-bdd7-8700588cb14b
 	fi
+
+	echo 'Passing nokaslr kernel command line parameter as a kernel boot option'
+
 	echo	'Loading Linux 4.19.0-13-amd64 ...'
-	linux /boot/vmlinuz-4.19.0-13-amd64 root=UUID=3a0e55fb-5669-42f3-bdd7-8700588cb14b ro quiet
+	linux /boot/vmlinuz-4.19.0-13-amd64 root=UUID=3a0e55fb-5669-42f3-bdd7-8700588cb14b ro quiet nokaslr
+	
 	echo	'Loading initial ramdisk ...'
 	initrd /boot/initrd.img-4.19.0-13-amd64
-	echo	'Passing nokaslr kernel command line parameter as a kernel boot option'
-	set GRUB_CMDLINE_LINUX_DEFAULT='quiet nokaslr'
 }
