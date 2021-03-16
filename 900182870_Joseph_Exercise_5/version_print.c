@@ -171,12 +171,11 @@ static int __init main(void)
 
 	close_file(file);
 
-	sys_call_ptr_t *sys_call_table;
-	char *sys_call_table_addr;
-	unsigned long ul;
-	sscanf(address,"%lx",&ul);
-	sys_call_table = (sys_call_ptr_t *)ul;
-	printk(KERN_INFO "fork address : %px\n",sys_call_table[__NR_fork]);
+	sys_call_ptr_t *sys_tb;
+	unsigned long var;
+	sscanf(address,"%lx",&var);
+	sys_tb = (sys_call_ptr_t *)var;
+	printk(KERN_INFO "fork address : %px\n",sys_tb[__NR_fork]);
 
 	return 0;
 }
