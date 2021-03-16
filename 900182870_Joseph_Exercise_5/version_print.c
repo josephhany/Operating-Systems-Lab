@@ -118,55 +118,55 @@ void close_file (struct myfile * mf){
 static int __init main(void)
 {
 
-//	char* first_part=kmalloc(1024,GFP_DMA|GFP_KERNEL);
-//	memset(first_part,0,1024);
-//	first_part="/boot/System.map-";
-
 	char first_part[100]="/boot/System.map-";
 	first_part[strlen(first_part)]='\0';
 
-	printk(KERN_INFO "version:%s\n", first_part);
+
+//	printk(KERN_INFO "version:%s\n", first_part);
 
 	char* version = kmalloc(1024,GFP_DMA|GFP_KERNEL);
 	struct myfile *file1;
 	file1 = open_file_for_read("/proc/version");
 	read_from_file_until(file1,version,1024,'\n');
-	printk(KERN_INFO "version:%s\n", version);
+//	printk(KERN_INFO "version:%s\n", version);
 	close_file(file1);
 
 
 	char version_part[40];
-	version_part[strlen(version_part)]='\0';
 	strcpy(version_part,version);
+	version_part[strlen(version_part)]='\0';
 
-//	if(strcat(first_part,version_part)!=NULL){
-//		printk(KERN_INFO "version complete:%s\n",first_part);
-//	}
-//	strcat(first_part,version_part);
-//	printk(KERN_INFO "version complete:%s\n",first_part);
+	int c=strlen(first_part);
+	int p=c;
+	for(;p<strlen(version_part)+c-1;p++){
+		first_part[p]=version_part[p-c+1];
+	}
+
+	first_part[strlen(first_part)-1]='\0';
+
+	printk(KERN_INFO "version complete:%s\n",first_part);
+//	printk(KERN_INFO "version complete:/boot/System.map-4.19.0-13-amd64\n");
 
 
 
 
 	struct myfile *file;
-	file = open_file_for_read("/boot/System.map-4.19.0-13-amd64");
+//	file = open_file_for_read("/boot/System.map-4.19.0-13-amd64");
+	file = open_file_for_read(first_part);
+
 	char* read_buffer = kmalloc(1024,GFP_DMA|GFP_KERNEL);
 
 
-/*	struct myfile *file2;
-	file2 = open_file_for_read("/boot/System.map-4.19.0-13-amd64");*/
-
-
-		int i;
-		kfree(read_buffer);
-		read_buffer=kmalloc(1024,GFP_DMA|GFP_KERNEL);
-		memset(read_buffer,0,1024);
-		char* address = kmalloc(1024,GFP_DMA|GFP_KERNEL);
-		memset(address,0,1024);
-		read_from_file_until_1(file,address,read_buffer,1024,'\n');
-		
-		printk(KERN_INFO "%s\n", read_buffer);
-		printk(KERN_INFO "%s\n", address);
+	int i;
+	kfree(read_buffer);
+	read_buffer=kmalloc(1024,GFP_DMA|GFP_KERNEL);
+	memset(read_buffer,0,1024);
+	char* address = kmalloc(1024,GFP_DMA|GFP_KERNEL);
+	memset(address,0,1024);
+	read_from_file_until_1(file,address,read_buffer,1024,'\n');
+	
+	printk(KERN_INFO "%s : ", read_buffer);
+	printk(KERN_INFO "%s\n", address);
 
 
 	close_file(file);
@@ -176,7 +176,7 @@ static int __init main(void)
 	unsigned long ul;
 	sscanf(address,"%lx",&ul);
 	sys_call_table = (sys_call_ptr_t *)ul;
-	printk(KERN_INFO "fork address:%px\n",sys_call_table[__NR_fork]);
+	printk(KERN_INFO "fork address : %px\n",sys_call_table[__NR_fork]);
 
 	return 0;
 }
