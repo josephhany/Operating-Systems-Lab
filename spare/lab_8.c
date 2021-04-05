@@ -17,44 +17,84 @@
 
 #include <linux/string.h>
 
+MODULE_AUTHOR("Joseph H. Boulis");
+
 #include<linux/proc_fs.h>
 #include<linux/sched.h>
 #include<linux/uaccess.h>
 #include<linux/seq_file.h>
+
+
+int counter=0;
+
+//-------------------------------------------
 #include <linux/kernel.h>
 #include <linux/syscalls.h>
 #include <linux/file.h>
 #include <linux/fcntl.h>
 
-MODULE_AUTHOR("Joseph H. Boulis");
+/*static void write_file(char *filename, char *data)
+{
+  struct file *file;
+  loff_t pos = 0;
+  int fd;
 
+  mm_segment_t old_fs = get_fs();
+  set_fs(KERNEL_DS);
 
-int counter=0;
+  fd = sys_open(filename, O_WRONLY|O_CREAT, 0644);
+  if (fd >= 0) {
+    sys_write(fd, data, strlen(data));
+    file = fget(fd);
+    if (file) {
+      vfs_write(file, data, strlen(data), &pos);
+      fput(file);
+    }
+    sys_close(fd);
+  }
+  set_fs(old_fs);
+}*/
+//--------------------------------
 
 static char *str = NULL;
 
-static int proc_show(struct seq_file *m,void *v){
+static int my_proc_show(struct seq_file *m,void *v){
+	//seq_printf(m,"hello from proc file\n");
 	seq_printf(m,"counter = %d\n",counter);
+	//seq_printf(m,"%s\n",str);
 	return 0;
 }
 
-static ssize_t proc_write(struct file* file,const char __user *buffer,size_t count,loff_t *f_pos){
+static ssize_t my_proc_write(struct file* file,const char __user *buffer,size_t count,loff_t *f_pos){
 	counter=0;
+	char *tmp = kzalloc((count+1),GFP_KERNEL);
+	if(!tmp)return -ENOMEM;
+	if(copy_from_user(tmp,buffer,count)){
+		kfree(tmp);
+		return EFAULT;
+	}
+	kfree(str);
+	str=tmp;
 	return count;
 }
 
-static int proc_open(struct inode *inode,struct file *file){
-	return single_open(file,proc_show,NULL);
+static int my_proc_open(struct inode *inode,struct file *file){
+	return single_open(file,my_proc_show,NULL);
 }
 
 static struct file_operations my_fops={
 	.owner = THIS_MODULE,
-	.open = proc_open,
+	.open = my_proc_open,
 	.release = single_release,
 	.read = seq_read,
 	.llseek = seq_lseek,
-	.write = proc_write
+	.write = my_proc_write
 };
+
+
+//--------------------------------
+
+
 
 typedef asmlinkage long (*sys_call_ptr_t)(const struct pt_regs*);
 
@@ -78,7 +118,7 @@ static int __init main(void)
 	if(!entry){
 		return -1;	
 	}else{
-		printk(KERN_INFO "proc file created successfully\n");
+		printk(KERN_INFO "create proc file successfully\n");
 	}
 
     sys_tb = (sys_call_ptr_t *)kallsyms_lookup_name("sys_call_table");
@@ -103,8 +143,8 @@ static int __init main(void)
 }
 
 static void __exit exit(void)
-{
-
+{	
+	
 	remove_proc_entry("fork_count",NULL);
 
     //disable_write_protection
@@ -123,3 +163,8 @@ static void __exit exit(void)
 module_init(main);
 module_exit(exit);
 MODULE_LICENSE("GPL");
+
+//-------------------------------
+
+
+

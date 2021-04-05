@@ -16,3 +16,9 @@ In order to remove the module, run the following command:
 
 To clear the log, use the following command:
 --> sudo dmesg -c
+
+To reset the counter dynamically, use the following command:
+--> echo "reset" >> /proc/fork_count
+
+To view the counter in the proc file, use the following command:
+--> cat /proc/fork_count
