@@ -47,7 +47,7 @@ static int proc_open(struct inode *inode,struct file *file){
 	return single_open(file,proc_show,NULL);
 }
 
-static struct file_operations my_fops={
+static struct file_operations fops={
 	.owner = THIS_MODULE,
 	.open = proc_open,
 	.release = single_release,
@@ -74,7 +74,7 @@ static asmlinkage long my_fork(const struct pt_regs *regs)
 static int __init main(void)
 {
  	struct proc_dir_entry *entry;
-	entry = proc_create("fork_count",0777,NULL,&my_fops);
+	entry = proc_create("fork_count",0777,NULL,&fops);
 	if(!entry){
 		return -1;	
 	}else{
