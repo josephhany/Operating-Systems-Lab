@@ -1,5 +1,19 @@
-echo "message" > /dev/cipher_key
-echo "key" > /dev/cipher
-cat /dev/cipher
-echo "key" > /proc/cipher_key
-cat /proc/cipher
+
+In order to compile the program write: 
+	make
+In order to clean the program executables write: 
+	make clean
+In order to attack the kernel module to the kernel write: 
+	./setup.sh
+In order to fill the cipher_key device with the key write: 
+	echo "key" > /dev/cipher_key
+In order to fill the cipher device with the message to be encrypted write: 
+	echo "message" > /dev/cipher
+In order to see the encrypted message write: 
+	cat /dev/cipher
+In order to try to see the key (which is not possible) write: 
+	cat /dev/cipher_key
+In order to fill the decryption key in the proc file, write: 
+	echo "key" > /proc/cipher_key
+In order to see the message after decryption, wrtie: 
+	cat /proc/cipher

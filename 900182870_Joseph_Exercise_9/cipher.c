@@ -38,15 +38,11 @@ void rc4(unsigned char * p, unsigned char * k, unsigned char * c,int l);
 /* Initialize memory for the message. */
 static unsigned char key[CIPHER_KEY_LEN] = {0};
 
-//static unsigned char key[CIPHER_KEY_LEN] = "abc";
-
 static unsigned char encrypted_data[CIPHER_LEN] = {0};
 
 static unsigned char decrypted_data[CIPHER_LEN] = {0};
 
 static unsigned char data_buffer[CIPHER_LEN] = {0};
-//static char *msg_Ptr;
-
 
 #define DEVICE_NAME "cipher"
 
@@ -89,8 +85,6 @@ static ssize_t write_dev_cipher_key(struct file *file, const char *buffer, size_
 
 static ssize_t read_dev_cipher_key(struct file *filp, char *buff, size_t len, loff_t *off)
 {
-	printk("inside read dev cipher key\n");
-
     static char *procfs_buffer = "Go away silly one, you cannot see my key >-:\n";
     static unsigned long procfs_buffer_size = sizeof(procfs_buffer );
     if ( copy_to_user(key, buff, sizeof(key)) ) {
@@ -102,10 +96,10 @@ static ssize_t read_dev_cipher_key(struct file *filp, char *buff, size_t len, lo
 static int open_dev_cipher_key(struct inode *inod, struct file *fil)
 {
     /* If there is no encryption key, return an invalid argument error. */
-	if (key == NULL) {
-		printk(KERN_NOTICE "cryptor: User tried to use the device when there was no encryption key present.");
+/*	if (key == NULL) {
+		printk(KERN_NOTICE "User tried to use the device when there was no encryption key present.");
 		return -EINVAL;
-	}
+	}*/
 
 	single_open(fil,write1,NULL);
 
@@ -185,7 +179,7 @@ static int open_dev_key(struct inode *inod, struct file *fil)
 {
     /* If there is no encryption key, return an invalid argument error. */
 /*	if (key == NULL) {
-		printk(KERN_NOTICE "cryptor: User tried to use the device when there was no encryption key present.");
+		printk(KERN_NOTICE "User tried to use the device when there was no encryption key present.");
 		return -EINVAL;
 	}*/
 	single_open(fil,write2,NULL);
@@ -199,7 +193,7 @@ static int release_dev_key(struct inode *inodep, struct file *filep)
 	memset(encrypted_data,0,CIPHER_LEN);
 	printk(KERN_INFO "data_buffer = %s and size =%d\n",data_buffer,sizeof(data_buffer));
     rc4(data_buffer,key,encrypted_data,sizeof(data_buffer));
-	printk(KERN_INFO "cryptor: Device closed succesfully.\n");
+	printk(KERN_INFO "Device closed succesfully.\n");
 	return 0;
 }
 
@@ -214,10 +208,9 @@ static int open_dev_key_1(struct inode *inod, struct file *fil)
 {
     /* If there is no encryption key, return an invalid argument error. */
 /*	if (key == NULL) {
-		printk(KERN_NOTICE "cryptor: User tried to use the device when there was no encryption key present.");
+		printk(KERN_NOTICE "User tried to use the device when there was no encryption key present.");
 		return -EINVAL;
 	}*/    
-	printk(KERN_INFO "we are hereeeeeeeeeee\n");
 	single_open(fil,write3,NULL);
 
 	return 0;
@@ -225,7 +218,7 @@ static int open_dev_key_1(struct inode *inod, struct file *fil)
 /* This is called when a process closes the character device file. */
 static int release_dev_key_1(struct inode *inodep, struct file *filep)
 {
-	printk(KERN_INFO "cryptor: Device closed succesfully.\n");
+	printk(KERN_INFO "Device closed succesfully.\n");
 	return 0;
 }
 
