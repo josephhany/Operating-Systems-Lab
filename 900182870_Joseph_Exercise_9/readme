@@ -1,0 +1,5 @@
+echo "message" > /dev/cipher_key
+echo "key" > /dev/cipher
+cat /dev/cipher
+echo "key" > /proc/cipher_key
+cat /proc/cipher
