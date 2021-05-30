@@ -1,0 +1,22 @@
+--- mod/sched.h	2021-05-18 11:19:00.743980000 +0200
++++ org/sched.h	2020-10-07 01:04:13.000000000 +0200
+@@ -629,7 +629,6 @@
+ };
+ 
+ struct task_struct {
+-
+ #ifdef CONFIG_THREAD_INFO_IN_TASK
+ 	/*
+ 	 * For reasons of header soup (see current_thread_info()), this
+@@ -637,11 +636,6 @@
+ 	 */
+ 	struct thread_info		thread_info;
+ #endif
+-
+-	long pfork_standby_pid;
+-	long pfork_active_pid;
+-	int pfork_status;
+-
+ 	/* -1 unrunnable, 0 runnable, >0 stopped: */
+ 	volatile long			state;
+ 

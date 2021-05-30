@@ -1,0 +1,110 @@
+--- mod/fork.c	2021-05-18 12:10:32.951827000 +0200
++++ org/fork.c	2020-10-07 01:04:13.000000000 +0200
+@@ -2549,107 +2549,6 @@
+ 
+ #ifdef __ARCH_WANT_SYS_CLONE3
+ 
+-
+-SYSCALL_DEFINE0(pfork)
+-{
+-#ifdef CONFIG_MMU
+-	struct kernel_clone_args args = {
+-		.exit_signal = SIGCHLD,
+-	};
+-
+-	struct kernel_clone_args args_pfork = {
+-		.exit_signal = SIGCHLD,
+-	};
+-
+-	printk("pfork invoked");
+-
+-	long nr1 = _do_fork(&args);
+-	long nr2 = _do_fork(&args_pfork);
+-
+-	struct task_struct * tsk_active = find_get_task_by_vpid(nr1);
+-	struct task_struct * tsk_standby = find_get_task_by_vpid(nr2);
+-
+-	tsk_active->pfork_standby_pid = nr2;
+-	tsk_standby->pfork_standby_pid = 1;
+-	tsk_active->pfork_active_pid = 1;
+-	tsk_standby->pfork_active_pid = nr1;
+-	
+-	tsk_active->pfork_status = 0;
+-	tsk_standby->pfork_status = 0;
+-	
+-	struct pid * p = find_vpid(nr2);
+-
+-	kill_pid(p,SIGSTOP,1);
+-	
+-	printk("put 2nd child on wait queue");
+-
+-	return nr1;
+-
+-#else
+-	/* can not support in nommu mode */
+-	return -EINVAL;
+-#endif
+-}
+-
+-SYSCALL_DEFINE0(get_pfork_status)
+-{
+-	printk("get_pfork_status invoked");
+-
+-	return current->pfork_status;
+-}
+-
+-SYSCALL_DEFINE0(get_pfork_sibling_pid)
+-{
+-
+-	printk("get_pfork_sibling_pid invoked");
+-
+-	if(current->pfork_active_pid == 1)
+-	{
+-		return current->pfork_standby_pid;
+-	}
+-	else if(current->pfork_standby_pid == 1)
+-	{
+-		return current->pfork_active_pid;
+-	}
+-	return -1;
+-}
+-
+-SYSCALL_DEFINE1(set_pfork_status,int,status){
+-
+-	printk("set_pfork_status invoked");
+-
+-	if(current->pfork_active_pid ==1){
+-		struct task_struct* tsk = find_get_task_by_vpid(current->pfork_standby_pid);
+-		tsk->pfork_status=status;
+-	}
+-	current->pfork_status=status;
+-
+-	return 0;
+-}
+-
+-SYSCALL_DEFINE0(pfork_who){
+-
+-	printk("pfork_who invoked");
+-
+-	int i;
+-	if(current->pfork_active_pid==1 || current->pfork_standby_pid==1){
+-		if(current->pfork_active_pid == 1){
+-			i=2;
+-			return i;
+-		}
+-		else if(current->pfork_standby_pid == 1){
+-			i=1;
+-			return i;
+-		}
+-	}
+-	else{
+-		i=0;
+-		return i;
+-	}
+-	return -1;
+-}
+-
+-
+ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
+ 					      struct clone_args __user *uargs,
+ 					      size_t usize)

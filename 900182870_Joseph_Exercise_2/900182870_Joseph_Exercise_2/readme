@@ -1,0 +1,25 @@
+
+In order to compile the program you should first put the program in a directory then change the directory that treminal is looking at to the directory that the prorgram is found in, using the cd command.
+Then you should compile the program using one of the following methods:
+1) type this command in the terminal --> gcc myshell.c -ansi -o myshell.o
+2) or type make in the terminal after putting the makefile inside the same directory in which you put the myshell program.
+
+Then, type the following commands to test the functionalities of the shell:
+1- exit
+2- cd (name of a directory)
+3- pwd
+4- ls -l
+5- ps -ef
+6- cat /etc/hosts
+7- ls -l > file
+8- cat</etc/hosts
+9- cat</etc/hosts > dump.txt
+10- ls -l | grep txt
+11- ps -ef | grep bash
+12- cat</etc/hosts | grep 127 > dump.txt
+13- x=100
+    echo $x
+    x=`cat /etc/hosts`
+    echo $x
+    y=$x
+    echo $y

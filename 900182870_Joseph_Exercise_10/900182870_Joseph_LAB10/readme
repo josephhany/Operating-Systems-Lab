@@ -1,0 +1,26 @@
+
+In order to compile the test program with the wrappers, use the following command:
+
+    g++ pfork_test_with_wrapper.c pfork.c -o pfork_test_with_wrapper.o
+
+In order to run the test program, use the following command:
+
+    ./pfork_test_with_wrapper
+
+In order to compile the test program without the wrappers, use the following command:
+
+    g++ pfork_test.c -o pfork_test.o
+
+In order to run the test program, use the following command:
+
+    ./pfork_test
+
+In order to create the patch files, use the following command:
+
+    diff -u file1.c file2.c > file.patch
+
+- The patch files directory include all the patch files.
+
+- The screenshots directory include all the screenshots taken for the running program.
+
+- The testing program + user library include the pfork.c pfork.h and the testing programs using both wrappers and without wrappers.
